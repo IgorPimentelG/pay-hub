@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS cards(
+    id CHAR(36) PRIMARY KEY,
+    number CHAR(16) NOT NULL UNIQUE,
+    owner VARCHAR(150) NOT NULL,
+    validity CHAR(5) NOT NULL,
+    cvv SMALLINT NOT NULL
+);
