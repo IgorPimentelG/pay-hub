@@ -13,7 +13,7 @@ public class Address implements Serializable {
 	@GeneratedValue(strategy = GenerationType.UUID)
 	private String id;
 
-	private String cep;
+	private String zipCode;
 
 	private String street;
 
@@ -31,14 +31,14 @@ public class Address implements Serializable {
 	public Address() {}
 
 	public Address(
-	  String cep,
+	  String zipCode,
 	  String street,
 	  String city,
 	  String neighborhood,
 	  String state,
 	  String number
 	) {
-		this.cep = cep;
+		this.zipCode = zipCode;
 		this.street = street;
 		this.city = city;
 		this.neighborhood = neighborhood;
@@ -50,12 +50,12 @@ public class Address implements Serializable {
 		return id;
 	}
 
-	public String getCep() {
-		return cep;
+	public String getZipCode() {
+		return zipCode;
 	}
 
-	public void setCep(String cep) {
-		this.cep = cep;
+	public void setZipCode(String zipCode) {
+		this.zipCode = zipCode;
 	}
 
 	public String getStreet() {
