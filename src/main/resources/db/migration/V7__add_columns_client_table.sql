@@ -1,0 +1,4 @@
+ALTER TABLE clients ADD COLUMN is_account_non_expired BOOLEAN DEFAULT FALSE;
+ALTER TABLE clients ADD COLUMN is_account_non_locked BOOLEAN DEFAULT FALSE;
+ALTER TABLE clients ADD COLUMN is_credentials_non_expired BOOLEAN DEFAULT FALSE;
+ALTER TABLE clients ADD COLUMN is_enabled BOOLEAN DEFAULT FALSE;
