@@ -79,8 +79,6 @@ public class HandleExceptionConfig extends ResponseEntityExceptionHandler {
 
 			if (i != (errors.size() - 1)) {
 				message.append(". ");
-			} else {
-				message.append(".");
 			}
 		}
 

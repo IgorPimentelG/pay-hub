@@ -14,3 +14,7 @@ spring:
     hibernate:
       ddl-auto: none
 
+security:
+  jwt:
+    secret-key: ${SECRET_KEY}
+    validity-in-milliseconds: 7200000
