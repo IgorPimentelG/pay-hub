@@ -33,12 +33,15 @@ public class Client implements Serializable, UserDetails {
 	@Column(name = "full_name")
 	private String fullName;
 
-	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "company_id", referencedColumnName = "id")
 	private Company company;
 
-	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "client")
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "client")
 	private final List<Payable> payables;
+
+	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "client")
+	private final List<AccountVerification> accountVerifications;
 
 	@Column(name = "is_account_non_expired")
 	private boolean isAccountNonExpired;
@@ -54,6 +57,7 @@ public class Client implements Serializable, UserDetails {
 
 	private Client() {
 		this.payables = new ArrayList<>();
+		this.accountVerifications = new ArrayList<>();
 	}
 
 	public Client(String email, String password, String cpf, String fullName) {
@@ -63,6 +67,7 @@ public class Client implements Serializable, UserDetails {
 		this.fullName = fullName;
 
 		this.payables = new ArrayList<>();
+		this.accountVerifications = new ArrayList<>();
 	}
 
 	public String getId() {
@@ -115,6 +120,14 @@ public class Client implements Serializable, UserDetails {
 
 	public List<Payable> getPayables() {
 		return payables;
+	}
+
+	public void addAccountVerification(AccountVerification accountVerification) {
+		this.accountVerifications.add(accountVerification);
+	}
+
+	public List<AccountVerification> getAccountVerifications() {
+		return accountVerifications;
 	}
 
 	public void setAccountNonExpired(boolean accountNonExpired) {
