@@ -10,6 +10,7 @@ import com.payhub.infra.repositories.ClientRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,6 +18,9 @@ public class ClientService {
 
 	@Autowired
 	private ClientRepository repository;
+
+	@Autowired
+	private PasswordEncoder encoder;
 
 	private final ClientMapper mapper = ClientMapper.INSTANCE;
 	private final Logger logger = LoggerFactory.getLogger(ClientService.class);
@@ -28,6 +32,7 @@ public class ClientService {
 		}
 
 		var client = mapper.create(data);
+		client.setPassword(encoder.encode(data.password()));
 		var entity = repository.save(client);
 
 		logger.info("The client with CPF: {} was registered.", entity.getCpf());
@@ -56,6 +61,32 @@ public class ClientService {
 			});
 
 		logger.info("The client with id: {} was searched and found.", id);
+
+		return entity;
+	}
+
+	public Client findByEmail(String email) {
+		var entity = repository.findByEmail(email)
+			.orElseThrow(() -> {
+				logger.warn("The client with email: {} doesn't exist.", email);
+				return new NotFoundException("The client with email: " + email + " doesn't exist.");
+			});
+
+		logger.info("The client with email: {} was searched and found.", email);
+
+		return entity;
+	}
+
+	public Client active(String id) {
+		var entity = findById(id);
+
+		entity.setEnabled(true);
+		entity.setAccountNonLocked(true);
+		entity.setAccountNonExpired(true);
+		entity.setCredentialsNonExpired(true);
+		repository.save(entity);
+
+		logger.info("The client with id: {} has been activated.", id);
 
 		return entity;
 	}
