@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
 
@@ -24,6 +25,9 @@ public class ClientServiceTests {
 
 	@Mock
 	ClientRepository repository;
+
+	@Mock
+	private PasswordEncoder encoder;
 
 	@BeforeEach
 	void setup() {
@@ -110,8 +114,8 @@ public class ClientServiceTests {
 	}
 
 	@Test
-	@DisplayName("should find a client")
-	void testFindClient() {
+	@DisplayName("should find a client by id")
+	void testFindClientById() {
 		var clientEntity = ClientMock.createEntity();
 
 		when(repository.findById(any())).thenReturn(Optional.of(clientEntity));
@@ -127,9 +131,9 @@ public class ClientServiceTests {
 	}
 
 	@Test
-	@DisplayName("should throws exception when find client doesn't exist")
-	void testErrorThrownOnFindClientDoesNotExist() {
-		Exception exception = assertThrows(NotFoundException .class, () -> {
+	@DisplayName("should throws exception when find client by id doesn't exist")
+	void testErrorThrownOnFindClientByIdDoesNotExist() {
+		Exception exception = assertThrows(NotFoundException.class, () -> {
 			service.findById("any id");
 		});
 
@@ -137,6 +141,37 @@ public class ClientServiceTests {
 		String resultMessage = exception.getMessage();
 
 		verify(repository, times(1)).findById(any());
+		assertEquals(expectedMessage, resultMessage);
+	}
+
+	@Test
+	@DisplayName("should find a client by email")
+	void testFindClientByEmail() {
+		var clientEntity = ClientMock.createEntity();
+
+		when(repository.findByEmail(any())).thenReturn(Optional.of(clientEntity));
+
+		var result = service.findByEmail("any@mail");
+
+		verify(repository, times(1)).findByEmail(any());
+		assertNotNull(result);
+		assertEquals(result.getEmail(), clientEntity.getEmail());
+		assertEquals(result.getPassword(), clientEntity.getPassword());
+		assertEquals(result.getCpf(), clientEntity.getCpf());
+		assertEquals(result.getFullName(), clientEntity.getFullName());
+	}
+
+	@Test
+	@DisplayName("should throws exception when find client by email doesn't exist")
+	void testErrorThrownOnFindClientByEmailDoesNotExist() {
+		Exception exception = assertThrows(NotFoundException.class, () -> {
+			service.findByEmail("any@mail");
+		});
+
+		String expectedMessage = "The client with email: any@mail doesn't exist.";
+		String resultMessage = exception.getMessage();
+
+		verify(repository, times(1)).findByEmail(any());
 		assertEquals(expectedMessage, resultMessage);
 	}
 
@@ -161,7 +196,7 @@ public class ClientServiceTests {
 	@Test
 	@DisplayName("should throws exception when disable a client doesn't exist")
 	void testErrorThrownOnDisableClientDoesNotExist() {
-		Exception exception = assertThrows(NotFoundException .class, () -> {
+		Exception exception = assertThrows(NotFoundException.class, () -> {
 			service.disable("any id");
 		});
 
