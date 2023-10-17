@@ -19,7 +19,8 @@ public class SecurityConfig {
 	@Autowired
 	private SecurityFilter securityFilter;
 
-	private final String[] WHITE_LIST = { "/api/auth/sign-in", "/api/auth/sign-up" };
+	private final String[] WHITE_LIST = {
+		"/api/auth/sign-in", "/api/auth/sign-up", "/api/auth/active-account/**" };
 
 	@Bean
 	public SecurityFilterChain defaultFilterChain(HttpSecurity http) throws Exception {

@@ -2,6 +2,7 @@ package com.payhub.infra.services;
 
 import com.payhub.domain.entities.AccountVerification;
 import com.payhub.domain.entities.Client;
+import com.payhub.infra.errors.ExpiredVerification;
 import com.payhub.infra.errors.FailVerification;
 import com.payhub.infra.repositories.AccountVerificationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,17 +38,20 @@ public class AccountVerificationService {
 			return accountVerification;
 		}
 
-		public AccountVerification verifyCode(String code, String clientId) {
-			var entity = repository.findActiveCode(clientId)
+		public void verifyCode(String code, String clientId) {
+			var now = LocalDateTime.now();
+			var entity = repository.findAllCodesByClient(clientId)
 				.orElseThrow(FailVerification::new);
 
-			if (!entity.getCode().equals(code) || entity.isVerified() || entity.isExpired()) {
+			if (entity.isExpired() || entity.getExpiration().isBefore(now)) {
+				throw new ExpiredVerification();
+			} else if (!entity.getCode().equals(code) || entity.isVerified()) {
 				throw new FailVerification();
 			}
 
 			entity.setVerified(true);
 			entity.setExpired(true);
-			return repository.save(entity);
+			repository.save(entity);
 		}
 
 		private LocalDateTime getExpiration() {

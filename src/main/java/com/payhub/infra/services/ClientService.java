@@ -20,6 +20,12 @@ public class ClientService {
 	private ClientRepository repository;
 
 	@Autowired
+	private MailService mailService;
+
+	@Autowired
+	private AccountVerificationService accountVerificationService;
+
+	@Autowired
 	private PasswordEncoder encoder;
 
 	private final ClientMapper mapper = ClientMapper.INSTANCE;
@@ -33,6 +39,7 @@ public class ClientService {
 
 		var client = mapper.create(data);
 		client.setPassword(encoder.encode(data.password()));
+		sendVerificationCode(client);
 		var entity = repository.save(client);
 
 		logger.info("The client with CPF: {} was registered.", entity.getCpf());
@@ -77,7 +84,7 @@ public class ClientService {
 		return entity;
 	}
 
-	public Client active(String id) {
+	public void active(String id) {
 		var entity = findById(id);
 
 		entity.setEnabled(true);
@@ -87,8 +94,6 @@ public class ClientService {
 		repository.save(entity);
 
 		logger.info("The client with id: {} has been activated.", id);
-
-		return entity;
 	}
 
 	public Client disable(String id) {
@@ -103,5 +108,18 @@ public class ClientService {
 		logger.info("The client with id: {} was disabled.", id);
 
 		return entity;
+	}
+
+	public void sendVerificationCode(Client client) {
+		var verification = accountVerificationService.generateCode(client);
+
+		mailService.send(
+			client.getEmail(),
+			"Account Verification",
+			"Your verification code: " + verification.getCode() + "."
+		);
+
+		client.addAccountVerification(verification);
+		repository.save(client);
 	}
 }

@@ -40,6 +40,7 @@ public class Client implements Serializable, UserDetails {
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "client")
 	private final List<Payable> payables;
 
+	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "client")
 	private final List<AccountVerification> accountVerifications;
 

@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS account_verifications(
 	id CHAR(36) PRIMARY KEY,
 	code CHAR(6) NOT NULL,
-	expiration DATE NOT NULL,
+	expiration DATETIME NOT NULL,
 	is_expired BOOLEAN NOT NULL,
 	is_verified BOOLEAN DEFAULT FALSE,
 

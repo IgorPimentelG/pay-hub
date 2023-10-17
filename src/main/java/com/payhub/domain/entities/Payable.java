@@ -27,7 +27,7 @@ public class Payable implements Serializable {
 	private PaymentStatus status;
 
 	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	@JoinColumn(name = "payable_id", referencedColumnName = "id")
+	@JoinColumn(name = "transaction_id", referencedColumnName = "id")
 	private Transaction transaction;
 
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
