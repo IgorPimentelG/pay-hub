@@ -2,6 +2,7 @@ package com.payhub.infra.services;
 
 import com.payhub.domain.entities.AccountVerification;
 import com.payhub.domain.entities.Client;
+import com.payhub.domain.types.VerificationMethod;
 import com.payhub.infra.errors.ExpiredVerification;
 import com.payhub.infra.errors.FailVerification;
 import com.payhub.infra.repositories.AccountVerificationRepository;
@@ -17,7 +18,7 @@ public class AccountVerificationService {
 		@Autowired
 		private AccountVerificationRepository repository;
 
-		public AccountVerification generateCode(Client client) {
+		public AccountVerification generateCode(Client client, VerificationMethod method) {
 			var random = new Random();
 			var code = new StringBuilder();
 			var expiration = getExpiration();
@@ -30,7 +31,8 @@ public class AccountVerificationService {
 			var accountVerification = new AccountVerification(
 				code.toString(),
 				client,
-				expiration
+				expiration,
+				method
 			);
 
 			repository.save(accountVerification);
@@ -38,14 +40,16 @@ public class AccountVerificationService {
 			return accountVerification;
 		}
 
-		public void verifyCode(String code, String clientId) {
+		public void verifyCode(String code, String clientId, VerificationMethod method) {
 			var now = LocalDateTime.now();
-			var entity = repository.findAllCodesByClient(clientId)
+			var entity = repository.findAllCodesByClient(clientId, method)
 				.orElseThrow(FailVerification::new);
 
 			if (entity.isExpired() || entity.getExpiration().isBefore(now)) {
 				throw new ExpiredVerification();
-			} else if (!entity.getCode().equals(code) || entity.isVerified()) {
+			} else if (entity.getMethod() != method ||
+					!entity.getCode().equals(code) ||
+					entity.isVerified()) {
 				throw new FailVerification();
 			}
 

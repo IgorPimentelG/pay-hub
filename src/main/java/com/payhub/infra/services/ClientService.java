@@ -1,8 +1,11 @@
 package com.payhub.infra.services;
 
+import com.payhub.domain.entities.AccountVerification;
 import com.payhub.domain.entities.Client;
+import com.payhub.domain.types.VerificationMethod;
 import com.payhub.infra.dtos.client.CreateClientDto;
 import com.payhub.infra.dtos.client.UpdateClientDto;
+import com.payhub.infra.dtos.global.EmailDto;
 import com.payhub.infra.errors.BadRequestException;
 import com.payhub.infra.errors.NotFoundException;
 import com.payhub.infra.mappers.ClientMapper;
@@ -12,6 +15,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.time.format.DateTimeFormatter;
 
 @Service
 public class ClientService {
@@ -39,7 +44,8 @@ public class ClientService {
 
 		var client = mapper.create(data);
 		client.setPassword(encoder.encode(data.password()));
-		sendVerificationCode(client);
+		sendVerificationCode(client, VerificationMethod.ACTIVATION);
+
 		var entity = repository.save(client);
 
 		logger.info("The client with CPF: {} was registered.", entity.getCpf());
@@ -55,6 +61,7 @@ public class ClientService {
 
 		var entity = findById(id);
 		mapper.update(data, entity);
+		entity.setPassword(encoder.encode(entity.getPassword()));
 		repository.save(entity);
 
 		return entity;
@@ -110,16 +117,24 @@ public class ClientService {
 		return entity;
 	}
 
-	public void sendVerificationCode(Client client) {
-		var verification = accountVerificationService.generateCode(client);
-
+	public void sendVerificationCode(Client client, VerificationMethod method) {
+		var verification = getAccountVerificationCode(client, method);
+		var dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+		var subject = method == VerificationMethod.ACTIVATION ? "Account Activation" : "Account Recovery";
 		mailService.send(
-			client.getEmail(),
-			"Account Verification",
-			"Your verification code: " + verification.getCode() + "."
+			new EmailDto(
+				client.getEmail(),
+				subject,
+				"Your code is: " + verification.getCode() + ". Confirm until " +
+					verification.getExpiration().format(dateFormatter) + "."
+			)
 		);
+	}
 
+	private AccountVerification getAccountVerificationCode(Client client, VerificationMethod method) {
+		var verification = accountVerificationService.generateCode(client, method);
 		client.addAccountVerification(verification);
 		repository.save(client);
+		return verification;
 	}
 }

@@ -33,10 +33,12 @@ public class Client implements Serializable, UserDetails {
 	@Column(name = "full_name")
 	private String fullName;
 
+	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "company_id", referencedColumnName = "id")
 	private Company company;
 
+	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "client")
 	private final List<Payable> payables;
 

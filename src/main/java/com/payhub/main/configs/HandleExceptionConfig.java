@@ -1,9 +1,15 @@
 package com.payhub.main.configs;
 
-import com.payhub.infra.errors.*;
+import com.payhub.infra.errors.BadRequestException;
+import com.payhub.infra.errors.ExpiredVerification;
+import com.payhub.infra.errors.FailVerification;
+import com.payhub.infra.errors.NotFoundException;
 import com.payhub.main.properties.ExceptionProperties;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.*;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -38,6 +44,14 @@ public class HandleExceptionConfig extends ResponseEntityExceptionHandler {
 		return new ResponseEntity<>(
 			responseFactory(ex, 400),
 			HttpStatus.BAD_REQUEST
+		);
+	}
+
+	@ExceptionHandler({FailVerification.class, ExpiredVerification.class})
+	public ResponseEntity<ExceptionProperties> handleConflictException(Exception ex) {
+		return new ResponseEntity<>(
+			responseFactory(ex, 409),
+			HttpStatus.CONFLICT
 		);
 	}
 

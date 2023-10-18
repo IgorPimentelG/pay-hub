@@ -1,5 +1,6 @@
 package com.payhub.domain.entities;
 
+import com.payhub.domain.types.VerificationMethod;
 import jakarta.persistence.*;
 
 import java.io.Serial;
@@ -32,14 +33,24 @@ public class AccountVerification implements Serializable {
 	@Column(name = "is_verified")
 	private boolean isVerified;
 
+	@Column(name = "verification_method")
+	@Enumerated(EnumType.STRING)
+	private VerificationMethod method;
+
 	public AccountVerification() {
 		init();
 	}
 
-	public AccountVerification(String code, Client client, LocalDateTime expiration) {
+	public AccountVerification(
+		String code,
+		Client client,
+		LocalDateTime expiration,
+		VerificationMethod method
+	) {
 		this.code = code;
 		this.client = client;
 		this.expiration = expiration;
+		this.method = method;
 
 		init();
 	}
@@ -91,6 +102,14 @@ public class AccountVerification implements Serializable {
 
 	public void setVerified(boolean verified) {
 		isVerified = verified;
+	}
+
+	public VerificationMethod getMethod() {
+		return method;
+	}
+
+	public void setMethod(VerificationMethod method) {
+		this.method = method;
 	}
 
 	@Override

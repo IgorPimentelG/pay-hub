@@ -1,5 +1,6 @@
 package com.payhub.infra.services;
 
+import com.payhub.infra.dtos.global.EmailDto;
 import com.payhub.infra.errors.BadRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,13 +17,13 @@ public class MailService {
 
 	private final Logger logger = LoggerFactory.getLogger(MailService.class);
 
-	public void send(String to, String subject, String content) {
+	public void send(EmailDto data) {
 		try {
 			var message = new SimpleMailMessage();
 			message.setFrom("no-reply@payhub.com");
-			message.setTo(to);
-			message.setSubject(subject);
-			message.setText(content);
+			message.setTo(data.to());
+			message.setSubject("Pay Hub Support - " + data.subject());
+			message.setText(data.content());
 			mailSender.send(message);
 
 			logger.info("The email sent successfully.");

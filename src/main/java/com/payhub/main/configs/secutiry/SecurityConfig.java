@@ -20,7 +20,10 @@ public class SecurityConfig {
 	private SecurityFilter securityFilter;
 
 	private final String[] WHITE_LIST = {
-		"/api/auth/sign-in", "/api/auth/sign-up", "/api/auth/active-account/**" };
+		"/api/auth/sign-in", "/api/auth/sign-up", "/api/auth/active-account/**",
+		"/api/auth/forgot-password/**", "/api/auth/change-password/**",
+		"/v3/api-docs/**", "/swagger-ui/**"
+	};
 
 	@Bean
 	public SecurityFilterChain defaultFilterChain(HttpSecurity http) throws Exception {
