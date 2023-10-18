@@ -6,8 +6,6 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.payhub.domain.entities.Client;
 import com.payhub.infra.dtos.credentials.AuthDto;
-import com.payhub.infra.errors.UnauthorizedException;
-import com.payhub.infra.repositories.ClientRepository;
 import com.payhub.main.properties.TokenProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -43,8 +41,6 @@ public class TokenService {
 	public AuthDto refreshToken(String refreshToken) {
 		if (refreshToken.contains("Bearer ")) {
 			refreshToken = refreshToken.substring("Bearer ".length());
-		} else {
-			throw new UnauthorizedException();
 		}
 
 		JWTVerifier verifier = JWT.require(getAlgorithm()).build();
@@ -58,7 +54,7 @@ public class TokenService {
 
 	public String validateToken(String token) {
 		return JWT.require(getAlgorithm())
-		  .withIssuer("")
+		  .withIssuer(getIssuer())
 		  .build()
 		  .verify(token)
 		  .getSubject();

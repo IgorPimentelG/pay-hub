@@ -37,7 +37,7 @@ public class AuthController {
 	}
 
 	@ApiOperationRefreshToken
-	@PostMapping("/refresh/{token}")
+	@GetMapping("/refresh/{token}")
 	public ResponseEntity<AuthDto> refreshToken(@PathVariable("token") String token) {
 		var result = service.refreshToken(token);
 		return ResponseEntity.ok(result);
