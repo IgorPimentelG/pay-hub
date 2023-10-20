@@ -25,6 +25,7 @@ public class AccountVerification implements Serializable {
 	@JoinColumn(name = "client_id")
 	private Client client;
 
+	@Temporal(TemporalType.TIMESTAMP)
 	private LocalDateTime expiration;
 
 	@Column(name = "is_expired")

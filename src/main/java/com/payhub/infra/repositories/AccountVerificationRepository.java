@@ -8,12 +8,11 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface AccountVerificationRepository extends JpaRepository<AccountVerification, String> {
-	@Query("SELECT acv FROM AccountVerification acv WHERE acv.client.id = :clientId AND acv.isExpired = false AND acv.method = :method")
-	Optional<AccountVerification> findAllCodesByClient(
+	@Query("SELECT acv FROM AccountVerification acv WHERE acv.client.id = :clientId AND acv.method = :method")
+	List<AccountVerification> findAllCodesByClient(
 		@Param("clientId") String clientId,
 		@Param("method") VerificationMethod method
 	);

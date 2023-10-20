@@ -43,14 +43,17 @@ public class AccountVerificationService {
 		public void verifyCode(String code, String clientId, VerificationMethod method) {
 			var now = LocalDateTime.now();
 			var entity = repository.findAllCodesByClient(clientId, method)
-				.orElseThrow(FailVerification::new);
+				.stream()
+				.filter(acv -> acv.getCode().equals(code))
+				.limit(1)
+				.reduce((last, current) -> current)
+				.orElse(null);
 
-			if (entity.isExpired() || entity.getExpiration().isBefore(now)) {
-				throw new ExpiredVerification();
-			} else if (entity.getMethod() != method ||
-					!entity.getCode().equals(code) ||
-					entity.isVerified()) {
+			if (entity == null || entity.getMethod() != method ||
+					!entity.getCode().equals(code) || entity.isVerified()) {
 				throw new FailVerification();
+			} else if (entity.isExpired() || entity.getExpiration().isBefore(now)) {
+				throw new ExpiredVerification();
 			}
 
 			entity.setVerified(true);
