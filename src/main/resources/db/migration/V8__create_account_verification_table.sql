@@ -1,9 +1,12 @@
+CREATE TYPE VERIFICATION_METHOD_TYPE AS ENUM('ACTIVATION', 'RECOVERY');
+
 CREATE TABLE IF NOT EXISTS account_verifications(
 	id CHAR(36) PRIMARY KEY,
 	code CHAR(6) NOT NULL,
-	expiration DATETIME NOT NULL,
+	expiration TIMESTAMP NOT NULL,
 	is_expired BOOLEAN NOT NULL,
 	is_verified BOOLEAN DEFAULT FALSE,
+	verification_method VERIFICATION_METHOD_TYPE NOT NULL,
 
 	client_id CHAR(36) NOT NULL,
 	CONSTRAINT fk_client_verification FOREIGN KEY (client_id) REFERENCES clients(id)

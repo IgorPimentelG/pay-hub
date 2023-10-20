@@ -6,8 +6,12 @@ spring:
     name: pay-hub
   config:
     import: optional:file:.env[.properties]
+  flyway:
+    baselineOnMigrate: true
+    locations: classpath:db/migration
   datasource:
-    url: jdbc:mysql://localhost:${DB_PORT}/${DB_DATABASE}
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:${DB_PORT}/${DB_DATABASE}?stringtype=unspecified
     username: ${DB_USER}
     password: ${DB_PASSWORD}
   jpa:

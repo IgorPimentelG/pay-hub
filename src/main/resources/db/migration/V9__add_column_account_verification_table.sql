@@ -1,1 +1,0 @@
-ALTER TABLE account_verifications ADD COLUMN verification_method ENUM('ACTIVATION', 'RECOVERY') NOT NULL;
