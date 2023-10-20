@@ -1,5 +1,6 @@
 package com.payhub.domain.entities;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
@@ -13,6 +14,7 @@ public class Address implements Serializable {
 	@GeneratedValue(strategy = GenerationType.UUID)
 	private String id;
 
+	@Column(name = "zip_code")
 	private String zipCode;
 
 	private String street;
@@ -25,6 +27,7 @@ public class Address implements Serializable {
 
 	private String number;
 
+	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	@OneToOne(mappedBy = "address")
 	private Company company;
 

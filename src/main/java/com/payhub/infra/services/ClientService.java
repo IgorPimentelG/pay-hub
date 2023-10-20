@@ -46,7 +46,7 @@ public class ClientService {
 		client.setPassword(encoder.encode(data.password()));
 		sendVerificationCode(client, VerificationMethod.ACTIVATION);
 
-		var entity = repository.save(client);
+		var entity = save(client);
 
 		logger.info("The client with CPF: {} was registered.", entity.getCpf());
 
@@ -98,7 +98,7 @@ public class ClientService {
 		entity.setAccountNonLocked(true);
 		entity.setAccountNonExpired(true);
 		entity.setCredentialsNonExpired(true);
-		repository.save(entity);
+		save(entity);
 
 		logger.info("The client with id: {} has been activated.", id);
 	}
@@ -131,10 +131,14 @@ public class ClientService {
 		);
 	}
 
+	public Client save(Client client) {
+		return repository.save(client);
+	}
+
 	private AccountVerification getAccountVerificationCode(Client client, VerificationMethod method) {
 		var verification = accountVerificationService.generateCode(client, method);
 		client.addAccountVerification(verification);
-		repository.save(client);
+		save(client);
 		return verification;
 	}
 }

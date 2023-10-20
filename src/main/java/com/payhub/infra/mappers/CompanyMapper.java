@@ -17,5 +17,6 @@ public interface CompanyMapper {
 	@Mapping(target = "id", ignore = true)
 	Company create(CreateCompanyDto source);
 
+	@Mapping(target = "cnpj", ignore = true)
 	void update(UpdateCompanyDto source, @MappingTarget Company target);
 }

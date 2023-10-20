@@ -4,9 +4,11 @@ import com.payhub.domain.entities.Company;
 import com.payhub.infra.dtos.client.CreateCompanyDto;
 import com.payhub.infra.dtos.client.UpdateCompanyDto;
 import com.payhub.infra.errors.BadRequestException;
+import com.payhub.infra.errors.ForbiddenException;
 import com.payhub.infra.errors.NotFoundException;
 import com.payhub.infra.mappers.CompanyMapper;
 import com.payhub.infra.repositories.CompanyRepository;
+import com.payhub.main.configs.secutiry.SecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,12 @@ public class CompanyService {
 	@Autowired
 	private AddressService addressService;
 
+	@Autowired
+	private ClientService clientService;
+
+	@Autowired
+	private SecurityContext securityContext;
+
 	private final CompanyMapper mapper = CompanyMapper.INSTANCE;
 	private final Logger logger = LoggerFactory.getLogger(CompanyService.class);
 
@@ -30,23 +38,41 @@ public class CompanyService {
 			throw new BadRequestException("It is necessary to provide company details.");
 		}
 
+		var client = clientService.findById(securityContext.currentUser().getId());
+
+		if (client.getCompany() != null) {
+			throw new BadRequestException("You already have a registered company.");
+		}
+
 		var address = addressService.create(data.address());
 		var company = mapper.create(data);
 		company.setAddress(address);
+		company.setClient(client);
+		client.setCompany(company);
+		address.setCompany(company);
+
 		var entity = repository.save(company);
+		clientService.save(client);
+		addressService.save(address);
 
 		logger.info("The company with CNPJ: {} has been registered.", entity.getCnpj());
 
 		return entity;
 	}
 
-	public Company update(UpdateCompanyDto data, String id) {
+	public Company update(UpdateCompanyDto data) {
 		if (data == null) {
 			logger.warn("The company data is null.");
 			throw new BadRequestException("It is necessary to provide company details.");
 		}
 
-		var entity = findById(id);
+		var client = securityContext.currentUser();
+		var entity = client.getCompany();
+
+		if (!entity.getClient().equals(securityContext.currentUser())) {
+			throw new ForbiddenException();
+		}
+
 		mapper.update(data, entity);
 		repository.save(entity);
 

@@ -1,5 +1,6 @@
 package com.payhub.domain.entities;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
 import java.io.Serial;
@@ -31,6 +32,7 @@ public class Company implements Serializable {
 	@JoinColumn(name = "address_id", referencedColumnName = "id")
 	private Address address;
 
+	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	@OneToOne(mappedBy = "company")
 	private Client client;
 

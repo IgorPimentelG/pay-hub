@@ -34,12 +34,12 @@ public class Client implements Serializable, UserDetails {
 	private String fullName;
 
 	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinColumn(name = "company_id", referencedColumnName = "id")
 	private Company company;
 
 	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "client")
+	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "client")
 	private final List<Payable> payables;
 
 	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)

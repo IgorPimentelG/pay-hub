@@ -28,7 +28,7 @@ public class AddressService {
 		}
 
 		var address = mapper.create(data);
-		var entity = repository.save(address);
+		var entity = save(address);
 
 		logger.info("The address with id: {} has been registered.", entity.getId());
 
@@ -43,7 +43,7 @@ public class AddressService {
 
 		var entity = findById(id);
 		mapper.update(data, entity);
-		repository.save(entity);
+		save(entity);
 
 		logger.info("The address with id: {} has been updated.", id);
 
@@ -60,5 +60,9 @@ public class AddressService {
 		logger.info("The address with id: {} was searched and found.", id);
 
 		return entity;
+	}
+
+	public Address save(Address address) {
+		return repository.save(address);
 	}
 }

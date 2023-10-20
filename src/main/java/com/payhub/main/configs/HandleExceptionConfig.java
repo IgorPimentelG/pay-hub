@@ -1,9 +1,6 @@
 package com.payhub.main.configs;
 
-import com.payhub.infra.errors.BadRequestException;
-import com.payhub.infra.errors.ExpiredVerification;
-import com.payhub.infra.errors.FailVerification;
-import com.payhub.infra.errors.NotFoundException;
+import com.payhub.infra.errors.*;
 import com.payhub.main.properties.ExceptionProperties;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
@@ -44,6 +41,22 @@ public class HandleExceptionConfig extends ResponseEntityExceptionHandler {
 		return new ResponseEntity<>(
 			responseFactory(ex, 400),
 			HttpStatus.BAD_REQUEST
+		);
+	}
+
+	@ExceptionHandler(UnauthorizedException.class)
+	public ResponseEntity<ExceptionProperties> handleUnauthorizedException(Exception ex) {
+		return new ResponseEntity<>(
+			responseFactory(ex, 401),
+			HttpStatus.UNAUTHORIZED
+		);
+	}
+
+	@ExceptionHandler(ForbiddenException.class)
+	public ResponseEntity<ExceptionProperties> handleForbiddenException(Exception ex) {
+		return new ResponseEntity<>(
+			responseFactory(ex, 403),
+			HttpStatus.FORBIDDEN
 		);
 	}
 
