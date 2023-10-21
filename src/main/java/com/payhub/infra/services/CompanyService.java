@@ -69,7 +69,9 @@ public class CompanyService {
 		var client = securityContext.currentUser();
 		var entity = client.getCompany();
 
-		if (!entity.getClient().equals(securityContext.currentUser())) {
+		if (entity == null) {
+			throw new NotFoundException("You don't have a registered company.");
+		} else if (!entity.getClient().equals(securityContext.currentUser())) {
 			throw new ForbiddenException();
 		}
 

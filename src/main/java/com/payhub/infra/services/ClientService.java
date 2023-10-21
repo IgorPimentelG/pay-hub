@@ -62,9 +62,10 @@ public class ClientService {
 		var entity = findById(id);
 		mapper.update(data, entity);
 		entity.setPassword(encoder.encode(entity.getPassword()));
-		repository.save(entity);
 
-		return entity;
+		logger.info("The client with CPF: {} was updated.", entity.getCpf());
+
+		return repository.save(entity);
 	}
 
 	public Client findById(String id) {
