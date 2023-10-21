@@ -1,5 +1,6 @@
 package com.payhub.infra.services;
 
+import com.payhub.domain.types.VerificationMethod;
 import com.payhub.infra.errors.FailVerification;
 import com.payhub.infra.mocks.AccountVerificationMock;
 import com.payhub.infra.mocks.ClientMock;
@@ -11,7 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.util.Optional;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -35,7 +36,7 @@ public class AccountVerificationServiceTests {
 	void testGenerateCode() {
 		var client = ClientMock.createEntity();
 
-		var result = service.generateCode(client);
+		var result = service.generateCode(client, VerificationMethod.ACTIVATION);
 
 		assertNotNull(result);
 		assertNotNull(result.getCode());
@@ -48,17 +49,14 @@ public class AccountVerificationServiceTests {
 	@Test
 	@DisplayName("should verify code")
 	void testVerifyCode() {
-		var accountVerification = AccountVerificationMock.createEntity();
+		var accountVerification = AccountVerificationMock.createEntity(VerificationMethod.ACTIVATION);
 
-		when(repository.findActiveCode(any())).thenReturn(Optional.of(accountVerification));
+		when(repository.findAllCodesByClient(any(), any())).thenReturn(List.of(accountVerification));
 		when(repository.save(any())).thenReturn(accountVerification);
 
-		var result = service.verifyCode("any code", "any id");
+		service.verifyCode("any code", "any id", VerificationMethod.ACTIVATION);
 
-		assertNotNull(result);
-		assertTrue(result.isVerified());
-		assertTrue(result.isExpired());
-		verify(repository, times(1)).findActiveCode(any());
+		verify(repository, times(1)).findAllCodesByClient(any(), any());
 		verify(repository, times(1)).save(any());
 	}
 
@@ -66,14 +64,14 @@ public class AccountVerificationServiceTests {
 	@DisplayName("should throws exception when fail verification")
 	void testErrorThrowOnVerifyCode() {
 		Exception exception = assertThrows(FailVerification.class, () -> {
-			service.verifyCode("any code", "any id");
+			service.verifyCode("any code", "any id", VerificationMethod.ACTIVATION);
 		});
 
 		String expectedMessage = "Account verification failed.";
 		String resultMessage = exception.getMessage();
 
 		assertEquals(expectedMessage, resultMessage);
-		verify(repository, times(1)).findActiveCode(any());
+		verify(repository, times(1)).findAllCodesByClient(any(), any());
 		verify(repository, times(0)).save(any());
 	}
 }

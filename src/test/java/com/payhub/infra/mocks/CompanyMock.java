@@ -7,13 +7,15 @@ import com.payhub.infra.dtos.client.UpdateCompanyDto;
 public abstract class CompanyMock {
 
 		public static Company createEntity() {
-			return new Company(
+			var company = new Company(
 				"00.000.000/0000-00",
 				"000.000.000.000",
 				"any name",
 				"any segment",
 				AddressMock.createEntity()
 			);
+			company.setClient(ClientMock.createEntity());
+			return company;
 		}
 
 	public static CreateCompanyDto createDto() {
@@ -28,8 +30,6 @@ public abstract class CompanyMock {
 
 	public static UpdateCompanyDto updateDto() {
 		return new UpdateCompanyDto(
-			"00.000.000/0000-00",
-			"000.000.000.000",
 			"any name updated",
 			"any segment updated"
 		);

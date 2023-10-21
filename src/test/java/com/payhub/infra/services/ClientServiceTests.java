@@ -1,7 +1,9 @@
 package com.payhub.infra.services;
 
+import com.payhub.domain.types.VerificationMethod;
 import com.payhub.infra.errors.BadRequestException;
 import com.payhub.infra.errors.NotFoundException;
+import com.payhub.infra.mocks.AccountVerificationMock;
 import com.payhub.infra.mocks.ClientMock;
 import com.payhub.infra.repositories.ClientRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,6 +29,12 @@ public class ClientServiceTests {
 	ClientRepository repository;
 
 	@Mock
+	MailService mailService;
+
+	@Mock
+	AccountVerificationService accountVerificationService;
+
+	@Mock
 	private PasswordEncoder encoder;
 
 	@BeforeEach
@@ -41,10 +49,12 @@ public class ClientServiceTests {
 		var clientDto = ClientMock.createDto();
 
 		when(repository.save(any())).thenReturn(clientEntity);
+		when(accountVerificationService.generateCode(any(), any()))
+			.thenReturn(AccountVerificationMock.createEntity(VerificationMethod.ACTIVATION));
 
 		var result = service.create(clientDto);
 
-		verify(repository, times(1)).save(any());
+		verify(repository, times(2)).save(any());
 		assertNotNull(result);
 		assertEquals(result.getEmail(), clientDto.email());
 		assertEquals(result.getPassword(), clientDto.password());
@@ -55,7 +65,6 @@ public class ClientServiceTests {
 	@Test
 	@DisplayName("should throws exception when creating a client with data null")
 	void testErrorThrownOnCreatingClientWithNullData() {
-
 		Exception exception = assertThrows(BadRequestException.class, () -> {
 			service.create(null);
 		});
@@ -75,6 +84,7 @@ public class ClientServiceTests {
 
 		when(repository.findById(any())).thenReturn(Optional.of(clientEntity));
 		when(repository.save(any())).thenReturn(clientEntity);
+		when(encoder.encode(any())).thenReturn(clientDto.password());
 
 		var result = service.update(clientDto, "any id");
 

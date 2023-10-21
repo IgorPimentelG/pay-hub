@@ -28,12 +28,16 @@ public class AccountVerificationService {
 				code.append(number);
 			}
 
+			System.out.println(code);
+
 			var accountVerification = new AccountVerification(
 				code.toString(),
 				client,
 				expiration,
 				method
 			);
+
+			System.out.println(accountVerification.getCode());
 
 			repository.save(accountVerification);
 
