@@ -18,6 +18,29 @@ services:
     networks:
       - local
 
+  app:
+    container_name: app
+    restart: on-failure
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: sh -c 'java -jar /app/target/*.jar'
+    ports:
+      - '8080:8080'
+    env_file:
+      - ./.env
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:${DB_PORT}/${DB_DATABASE}?stringtype=unspecified
+      SPRING_DATASOURCE_USERNAME: ${DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      SPRING_FLYWAY_URL: jdbc:postgresql://db:${DB_PORT}/${DB_DATABASE}?stringtype=unspecified
+      SPRING_FLYWAY_USER: ${DB_USER}
+      SPRING_FLYWAY_PASSWORD: ${DB_PASSWORD}
+    depends_on:
+      - db
+    networks:
+      - local
+
 volumes:
   db_data:
 
