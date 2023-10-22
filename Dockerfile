@@ -1,11 +1,8 @@
-FROM eclipse-temurin:17-jdk-jammy
+FROM openjdk:17-jdk-slim
 
 WORKDIR /app
 
-COPY . .
+ARG JAR_FILE=target/*.jar
+COPY ${JAR_FILE} app.jar
 
-RUN apt-get update && apt-get install dos2unix
-RUN dos2unix mvnw
-
-RUN ["./mvnw", "clean", "install"]
-CMD ["./mvnw", "spring-boot:run"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
