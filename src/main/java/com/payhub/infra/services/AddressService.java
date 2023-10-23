@@ -4,9 +4,11 @@ import com.payhub.domain.entities.Address;
 import com.payhub.infra.dtos.client.CreateAddressDto;
 import com.payhub.infra.dtos.client.UpdateAddressDto;
 import com.payhub.infra.errors.BadRequestException;
+import com.payhub.infra.errors.ForbiddenException;
 import com.payhub.infra.errors.NotFoundException;
 import com.payhub.infra.mappers.AddressMapper;
 import com.payhub.infra.repositories.AddressRepository;
+import com.payhub.main.configs.secutiry.SecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,9 @@ public class AddressService {
 
 	@Autowired
 	private AddressRepository repository;
+
+	@Autowired
+	private SecurityContext securityContext;
 
 	private final AddressMapper mapper = AddressMapper.INSTANCE;
 	private final Logger logger = LoggerFactory.getLogger(AddressService.class);
@@ -41,7 +46,13 @@ public class AddressService {
 			throw new BadRequestException("The address data cannot be null.");
 		}
 
+		var company = securityContext.currentUser().getCompany();
 		var entity = findById(id);
+
+		if (!company.getAddress().getId().equals(id)) {
+			throw new ForbiddenException();
+		}
+
 		mapper.update(data, entity);
 		save(entity);
 

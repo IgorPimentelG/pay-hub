@@ -6,9 +6,10 @@ import com.payhub.infra.dtos.client.UpdateAddressDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.factory.Mappers;
 
-@Mapper
+@Mapper(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface AddressMapper {
 
 	AddressMapper INSTANCE = Mappers.getMapper(AddressMapper.class);
