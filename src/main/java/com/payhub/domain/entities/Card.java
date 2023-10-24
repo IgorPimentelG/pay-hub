@@ -25,7 +25,7 @@ public class Card implements Serializable {
 
 	private String validity;
 
-	private int cvv;
+	private String cvv;
 
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "card")
 	private final List<Transaction> transactions;
@@ -34,7 +34,7 @@ public class Card implements Serializable {
 		this.transactions = new ArrayList<>();
 	}
 
-	public Card(String number, String owner, String validity, int cvv) {
+	public Card(String number, String owner, String validity, String cvv) {
 		this.number = number;
 		this.owner = owner;
 		this.validity = validity;
@@ -71,11 +71,11 @@ public class Card implements Serializable {
 		this.validity = validity;
 	}
 
-	public int getCvv() {
+	public String getCVV() {
 		return cvv;
 	}
 
-	public void setCvv(int cvv) {
+	public void setCVV(String cvv) {
 		this.cvv = cvv;
 	}
 
