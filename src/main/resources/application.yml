@@ -31,5 +31,7 @@ spring:
 
 security:
   jwt:
-    secret-key: ${SECRET_KEY}
+    secret-key: ${JWT_SECRET_KEY}
     validity-in-milliseconds: 7200000
+  aes:
+    secret-key: ${AES_SECRET_KEY}
