@@ -35,6 +35,10 @@ public class CardService {
 
 		logger.info("The card was successfully registered.");
 
+		return save(card);
+	}
+
+	public Card save(Card card) {
 		return repository.save(card);
 	}
 

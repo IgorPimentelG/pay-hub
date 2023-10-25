@@ -1,5 +1,6 @@
 package com.payhub.domain.entities;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
 import java.io.Serial;
@@ -27,6 +28,7 @@ public class Card implements Serializable {
 
 	private String cvv;
 
+	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "card")
 	private final List<Transaction> transactions;
 
