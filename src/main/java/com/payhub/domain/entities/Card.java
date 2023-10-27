@@ -29,7 +29,7 @@ public class Card implements Serializable {
 	private String cvv;
 
 	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "card")
+	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.DETACH, mappedBy = "card")
 	private final List<Transaction> transactions;
 
 	public Card() {

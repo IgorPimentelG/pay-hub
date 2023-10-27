@@ -10,6 +10,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.Optional;
+
 @Service
 public class CardService {
 
@@ -27,7 +30,15 @@ public class CardService {
 			throw new BadRequestException("The card data cannot be null.");
 		} else if (!validCardNumber(data.number())) {
       throw new BadRequestException("The card number is invalid.");
-    }
+    } else if (!validCardDate(data.validity())) {
+			throw new BadRequestException("The card validity is invalid.");
+		}
+
+		var cardRegistered = findByNumber(encryptorService.encrypt(data.number()));
+
+		if (cardRegistered.isPresent()) {
+			return cardRegistered.get();
+		}
 
 		var card = mapper.create(data);
 		card.setNumber(encryptorService.encrypt(data.number()));
@@ -36,6 +47,10 @@ public class CardService {
 		logger.info("The card was successfully registered.");
 
 		return save(card);
+	}
+
+	private Optional<Card> findByNumber(String number) {
+		return repository.findByNumber(number);
 	}
 
 	public Card save(Card card) {
@@ -63,5 +78,21 @@ public class CardService {
 		}
 
 		return (sum + verificationDigit) % 10 == 0;
+	}
+
+	private boolean validCardDate(String date) {
+		var now = LocalDate.now();
+		var separateDate = date.split("/");
+		var cardMonth = Integer.parseInt(separateDate[0]);
+		var cardYear = Integer.parseInt(separateDate[1]);
+		var currentMonth = now.getMonth().getValue();
+		var currentYear = Integer.parseInt(String.valueOf(now.getYear()).substring(2));
+
+
+		if ((cardYear < currentYear) || (cardMonth < 1 || cardMonth > 12)) {
+			return false;
+		} else {
+			return !(cardYear == currentYear && cardMonth > currentMonth);
+		}
 	}
 }
