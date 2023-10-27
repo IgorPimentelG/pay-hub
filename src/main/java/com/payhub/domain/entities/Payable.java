@@ -1,5 +1,6 @@
 package com.payhub.domain.entities;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.payhub.domain.types.PaymentStatus;
 import jakarta.persistence.*;
 
@@ -30,6 +31,7 @@ public class Payable implements Serializable {
 	@JoinColumn(name = "transaction_id", referencedColumnName = "id")
 	private Transaction transaction;
 
+	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinColumn(name = "client_id")
 	private Client client;
