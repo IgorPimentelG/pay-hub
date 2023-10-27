@@ -1,6 +1,7 @@
 package com.payhub.infra.services;
 
 import com.google.gson.Gson;
+import com.payhub.domain.entities.Payable;
 import com.payhub.domain.entities.Transaction;
 import com.payhub.domain.types.PaymentMethod;
 import com.payhub.infra.dtos.transaction.PaymentApprovalDto;
@@ -10,6 +11,7 @@ import com.payhub.infra.errors.FailTransaction;
 import com.payhub.infra.errors.NotFoundException;
 import com.payhub.infra.mappers.TransactionMapper;
 import com.payhub.infra.repositories.TransactionRepository;
+import com.payhub.main.configs.secutiry.SecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.List;
 
 @Service
 public class TransactionService {
@@ -28,12 +32,20 @@ public class TransactionService {
 	@Autowired
 	private CardService cardService;
 
+	@Autowired
+	private PayableService payableService;
+
+	@Autowired
+	private SecurityContext securityContext;
+
 	private final TransactionMapper mapper = TransactionMapper.INSTANCE;
 	private final Logger logger = LoggerFactory.getLogger(TransactionService.class);
 
 	public Transaction create(TransactionDto data) {
 		if (data == null) {
 			throw new BadRequestException("The transaction data cannot be null.");
+		} else if (securityContext.currentUser().getCompany() == null) {
+			throw new BadRequestException("You don't have a registered company.");
 		}
 
 		var card = cardService.register(data.card());
@@ -41,16 +53,22 @@ public class TransactionService {
 		transaction.setCard(card);
 		transaction.setPaymentMethod(PaymentMethod.valueOf(data.paymentMethod()));
 
-		card.addTransaction(transaction);
-		cardService.save(card);
-
 		if (!verifyTransaction(transaction)) {
 			throw new FailTransaction();
 		}
 
+		transaction = repository.save(transaction);
+
+		card.addTransaction(transaction);
+		cardService.save(card);
+
+		var payable = payableService.register(transaction);
+    transaction.setPayable(payable);
+		repository.save(transaction);
+
 		logger.info("The transaction {} has been created", transaction.getId());
 
-		return repository.save(transaction);
+		return transaction;
 	}
 
 	public Transaction findById(String id) {
@@ -60,6 +78,13 @@ public class TransactionService {
 		logger.info("The transaction {} has been found", entity.getId());
 
 		return entity;
+	}
+
+	public List<Transaction> findAll() {
+		logger.info("All transaction has been listed");
+		return payableService.findAll().stream()
+			.map(Payable::getTransaction)
+			.toList();
 	}
 
 	private boolean verifyTransaction(Transaction transaction) {
