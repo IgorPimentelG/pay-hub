@@ -1,5 +1,6 @@
 package com.payhub.domain.entities;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.payhub.domain.types.PaymentMethod;
 import jakarta.persistence.*;
 
@@ -27,10 +28,11 @@ public class Transaction implements Serializable {
 	@Column(name = "payment_method")
 	private PaymentMethod paymentMethod;
 
-	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	@JoinColumn(name = "card_id")
 	private Card card;
 
+	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	@OneToOne(mappedBy = "transaction")
 	private Payable payable;
 
@@ -77,6 +79,14 @@ public class Transaction implements Serializable {
 
 	public void setPaymentMethod(PaymentMethod paymentMethod) {
 		this.paymentMethod = paymentMethod;
+	}
+
+	public Payable getPayable() {
+		return payable;
+	}
+
+	public void setPayable(Payable payable) {
+		this.payable = payable;
 	}
 
 	@Override
