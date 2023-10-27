@@ -36,8 +36,9 @@ public class Payable implements Serializable {
 
 	public Payable() {}
 
-	public Payable(Transaction transaction, LocalDateTime paymentDate, PaymentStatus status) {
+	public Payable(Transaction transaction, Client client, LocalDateTime paymentDate, PaymentStatus status) {
 		this.transaction = transaction;
+		this.client = client;
 		this.paymentDate = paymentDate;
 		this.status = status;
 	}
@@ -68,6 +69,14 @@ public class Payable implements Serializable {
 
 	public void setStatus(PaymentStatus status) {
 		this.status = status;
+	}
+
+	public Client getClient() {
+		return client;
+	}
+
+	public void setClient(Client client) {
+		this.client = client;
 	}
 
 	@Override
