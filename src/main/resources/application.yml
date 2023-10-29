@@ -4,6 +4,8 @@ server:
 spring:
   application:
     name: pay-hub
+  main:
+    allow-bean-definition-overriding: true
   config:
     import: optional:file:.env[.properties]
   flyway:
@@ -28,6 +30,11 @@ spring:
           auth: true
           starttls:
             enable: true
+  cache:
+    type: jcache
+    jcache:
+      provider: com.hazelcast.cache.impl.HazelcastServerCachingProvider
+      config: classpath:hazelcast.xml
 
 security:
   jwt:
@@ -35,3 +42,23 @@ security:
     validity-in-milliseconds: 7200000
   aes:
     secret-key: ${AES_SECRET_KEY}
+
+bucket4j:
+  enabled: true
+  filters:
+    - cache-name: api-rate-limit
+      url: .*
+      filter-order: 100
+      rate-limits:
+          - execute-condition: "@securityContext.isAuthenticated()"
+            cache-key: "@securityContext.getUsername()"
+            bandwidths:
+              - capacity: 10
+                time: 1
+                unit: minutes
+          - execute-condition: "@securityContext.isAuthenticated() == false"
+            cache-key: "getRemoteAddr()"
+            bandwidths:
+              - capacity: 5
+                time: 1
+                unit: minutes
