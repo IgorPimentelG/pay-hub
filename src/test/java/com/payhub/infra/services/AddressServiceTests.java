@@ -3,7 +3,10 @@ package com.payhub.infra.services;
 import com.payhub.infra.errors.BadRequestException;
 import com.payhub.infra.errors.NotFoundException;
 import com.payhub.infra.mocks.AddressMock;
+import com.payhub.infra.mocks.ClientMock;
+import com.payhub.infra.mocks.CompanyMock;
 import com.payhub.infra.repositories.AddressRepository;
+import com.payhub.main.configs.secutiry.SecurityContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -25,9 +28,16 @@ public class AddressServiceTests {
 	@Mock
 	AddressRepository repository;
 
+	@Mock
+	SecurityContext securityContext;
+
 	@BeforeEach
 	void setup() {
 		MockitoAnnotations.openMocks(this);
+
+		var client = ClientMock.createEntity();
+		client.setCompany(CompanyMock.createEntity());
+		when(securityContext.currentUser()).thenReturn(client);
 	}
 
 	@Test
@@ -68,13 +78,21 @@ public class AddressServiceTests {
 	@Test
 	@DisplayName("should update an address")
 	void testUpdateAddress() {
-		var addressEntity = AddressMock.createEntity();
+		var addressEntity = AddressMock.createUpdatedEntity();
 		var addressDto = AddressMock.updateDto();
+		var client = ClientMock.createEntity();
+		var company = CompanyMock.createEntity();
+		company.setAddress(addressEntity);
+		client.setCompany(company);
 
+		var id = "any id";
+
+		when(addressEntity.getId()).thenReturn(id);
+		when(securityContext.currentUser()).thenReturn(client);
 		when(repository.findById(any())).thenReturn(Optional.of(addressEntity));
 		when(repository.save(any())).thenReturn(addressEntity);
 
-		var result = service.update(addressDto, "any id");
+		var result = service.update(addressDto, id);
 
 		verify(repository, times(1)).save(any());
 		assertNotNull(result);
