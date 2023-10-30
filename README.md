@@ -1,12 +1,9 @@
 # Pay Hub ️👨‍💻
 
-#
-
 <p align="center">
   <img src="./docs/logo.png" alt="logo" width="300" />
 </p>
 
-#
 
 ![Version](https://img.shields.io/badge/version-1.0.0-blue)
 
@@ -50,11 +47,23 @@ o desempenho de aplicativos baseados em Spring. Essa combinação de ferramentas
 métricas e estatísticas dos seus serviços, permitindo uma gestão mais eficaz e rápida identificação de problemas de desempenho. 
 
 <p align="center">
-  <img src="./docs/monitoring.png." alt="dashboard de monitoramento" />
+  <img src="./docs/monitoring.png" alt="dashboard de monitoramento" />
 </p>
 
 Através desse conjunto de ferramentas integradas no Pay Hub, é possível obter um diagnóstico rápido e prático do sistema 
 como um todo. Visualizando métricas como: uso de CPU, de memória, requisições http, uptime, estatísticas da jvm entre outros. 
+
+## Documentação
+
+O uso Swagger simplifica o processo de documentação e teste da API. Ele fornece uma interface visual que permite 
+visualizar e interajam com a API sem a necessidade de entender os detalhes técnicos subjacentes.
+
+<p align="center">
+  <img src="./docs/swagger.png" alt="dashboard de monitoramento" />
+</p>
+
+Toda a documentação da API, foi construída utilizando Swagger com uso de anotações customizadas para detalhar e espeficicar cada 
+endpoint disponível.
 
 ## Principais tecnologias
 - [Spring Boot](https://spring.io/projects/spring-boot): O Spring Boot é um framework de desenvolvimento em Java que
