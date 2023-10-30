@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Bean;
 @OpenAPIDefinition(info = @Info(
 	title = "Pay Hub",
 	description = "API for managing transactions between customer and commerce",
-	version = "0.0.1"
+	version = "1.0.0"
 ))
 public class OpenApiConfig {
 	@Bean
@@ -20,7 +20,7 @@ public class OpenApiConfig {
 			.components(new Components())
 			.info(new io.swagger.v3.oas.models.info.Info()
 				.title("Pay Hub")
-				.version("0.0.1")
+				.version("1.0.0")
 				.contact(new Contact()
 					.email("dev.igorpimentel@gmail.com")
 					.url("https://igorpimentelg.github.io/personal-portfolio/")
