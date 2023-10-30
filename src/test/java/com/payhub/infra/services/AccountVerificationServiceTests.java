@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-public class AccountVerificationServiceTests {
+class AccountVerificationServiceTests {
 
 	@InjectMocks
 	AccountVerificationService service;

@@ -5,9 +5,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.Cipher;
+import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Base64;
 
@@ -59,7 +61,7 @@ public class EncryptorService {
 		}
 	}
 
-	private Cipher cipherFactory() throws Exception {
+	private Cipher cipherFactory() throws NoSuchPaddingException, NoSuchAlgorithmException {
 		return Cipher.getInstance("AES/ECB/PKCS5PADDING");
 	}
 }

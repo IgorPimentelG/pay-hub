@@ -63,10 +63,10 @@ public class CardService {
 		int sum = 0;
 		int multiplier = 2;
 		final int lengthToPenultimate = number.length() - 2;
-		final int verificationDigit = (int) number.charAt(number.length() - 1) - '0';
+		final int verificationDigit = number.charAt(number.length() - 1) - '0';
 
 		for (int i = lengthToPenultimate; i >= 0; i--) {
-			int digit = (int) number.charAt(i) - '0';
+			int digit = number.charAt(i) - '0';
 			digit *= multiplier;
 
 			if (digit > 9) {

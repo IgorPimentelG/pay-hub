@@ -9,7 +9,7 @@ import org.mockito.MockitoAnnotations;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class EncryptorServiceTests {
+class EncryptorServiceTests {
 
 	@InjectMocks
 	EncryptorService service;
