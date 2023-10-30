@@ -22,7 +22,7 @@ public class SecurityConfig {
 	private final String[] WHITE_LIST = {
 		"/api/auth/sign-in", "/api/auth/sign-up", "/api/auth/active-account/**",
 		"/api/auth/forgot-password/**", "/api/auth/change-password/**",
-		"/v3/api-docs/**", "/swagger-ui/**"
+		"/v3/api-docs/**", "/swagger-ui/**", "/actuator/**"
 	};
 
 	@Bean

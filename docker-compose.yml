@@ -41,8 +41,33 @@ services:
     networks:
       - local
 
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus:latest
+    ports:
+      - '9090:9090'
+    volumes:
+      - ./src/main/resources/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    networks:
+      - local
+    depends_on:
+      - app
+
+  grafana:
+    container_name: grafana
+    image: grafana/grafana:latest
+    ports:
+      - '3000:3000'
+    networks:
+      - local
+    depends_on:
+      - prometheus
+
 volumes:
   db_data:
+  prometheus_data:
+  grafana_data:
 
 networks:
   local:
