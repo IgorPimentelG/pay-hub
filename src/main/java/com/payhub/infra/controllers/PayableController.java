@@ -3,8 +3,10 @@ package com.payhub.infra.controllers;
 import com.payhub.infra.controllers.docs.payable.ApiOperationFindAll;
 import com.payhub.infra.controllers.docs.payable.ApiOperationFindById;
 import com.payhub.infra.controllers.docs.payable.ApiOperationFindByStatus;
+import com.payhub.infra.controllers.docs.payable.ApiOperationReport;
 import com.payhub.infra.controllers.helpers.PayableResponseFormatter;
 import com.payhub.infra.dtos.transaction.PayableResponse;
+import com.payhub.infra.dtos.transaction.ReportResponse;
 import com.payhub.infra.services.PayableService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,5 +51,12 @@ public class PayableController {
 	public ResponseEntity<PayableResponse> findById(@PathVariable("id") String id) {
 		var result = service.findById(id);
 		return ResponseEntity.ok(responseFormatter.format(result));
+	}
+
+	@ApiOperationReport
+	@GetMapping("/v1/report")
+	public ResponseEntity<ReportResponse> report() {
+		var result = service.report();
+    return ResponseEntity.ok(result);
 	}
 }
