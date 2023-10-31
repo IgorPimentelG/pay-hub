@@ -13,7 +13,7 @@ spring:
     locations: classpath:db/migration
   datasource:
     driverClassName: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:${DB_PORT}/${DB_DATABASE}?stringtype=unspecified
+    url: ${DB_URL}
     username: ${DB_USER}
     password: ${DB_PASSWORD}
   jpa:

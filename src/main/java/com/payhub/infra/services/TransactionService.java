@@ -38,6 +38,7 @@ public class TransactionService {
 	@Autowired
 	private SecurityContext securityContext;
 
+	private final RestTemplate restTemplate = new RestTemplate();
 	private final TransactionMapper mapper = TransactionMapper.INSTANCE;
 	private final Logger logger = LoggerFactory.getLogger(TransactionService.class);
 
@@ -89,7 +90,6 @@ public class TransactionService {
 
 	private boolean verifyTransaction(Transaction transaction) {
 		final var gson = new Gson();
-		final var restTemplate = new RestTemplate();
 		final var PAYMENT_API_URL = "https://run.mocky.io/v3/f11c7eeb-d05e-4176-b4e0-43243f256543";
 
 		HttpEntity<Transaction> request = new HttpEntity<>(transaction);

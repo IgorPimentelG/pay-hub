@@ -11,6 +11,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.MediaType;
+import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.test.web.client.MockRestServiceServer;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,6 +22,8 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 class TransactionServiceTests {
 
@@ -55,6 +61,15 @@ class TransactionServiceTests {
 		when(repository.save(any())).thenReturn(transactionEntity);
 		when(cardService.save(any())).thenReturn(cardEntity);
 		when(cardService.register(any())).thenReturn(cardEntity);
+
+		var restTemplate = new RestTemplate();
+		var mockServer = MockRestServiceServer.createServer(restTemplate);
+
+		mockServer.expect(
+			requestTo("https://run.mocky.io/v3/f11c7eeb-d05e-4176-b4e0-43243f256543"))
+			.andRespond(withSuccess("{\"accepted\": true}", MediaType.APPLICATION_JSON));
+
+		ReflectionTestUtils.setField(service, "restTemplate", restTemplate);
 
 		var result = service.create(transactionDto);
 
