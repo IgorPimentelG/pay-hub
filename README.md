@@ -9,7 +9,8 @@
 
 ![Java](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white)
 ![Spring](https://img.shields.io/badge/spring-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white)
-
+![Docker](https://img.shields.io/badge/Docker-2496ED.svg?style=for-the-badge&logo=Docker&logoColor=white)
+![Render](https://img.shields.io/badge/Render-46E3B7.svg?style=for-the-badge&logo=Render&logoColor=white)
 
 É uma aplicação de gerenciamento de transações de pagamento entre clientes e estabelecimentos comerciais.
 Ele permite aos usuários automatizar o rastreamento de transações de pagamentos em cartões de débito e crédito,
@@ -94,7 +95,10 @@ endpoint disponível.
 - [Insomnia](https://insomnia.rest/download)
 
 ## Produção
-❌ EM BREVE ❌
+
+A API está hospedada na infraestrutura da plataforma [Render](https://render.com/), em conjunto com o banco de dados PostgreSQL.
+
+👉 [Aqui para ver o projeto em produção](https://pay-hub.onrender.com/swagger-ui/index.html#/) 👈
 
 ## Execução
 
