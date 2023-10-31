@@ -1,8 +1,7 @@
 package com.payhub.infra.controllers.docs.payable;
 
-import com.payhub.domain.entities.Payable;
+import com.payhub.infra.dtos.transaction.ReportResponse;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -14,7 +13,7 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-@Operation(summary = "Find All Payable by Status", description = "Allow find all payable by status", tags = {"Payable"})
-@ApiResponse(responseCode = "200", description = "The payable was found by status",
-	content = @Content(array = @ArraySchema(schema = @Schema(implementation = Payable.class))))
-public @interface ApiOperationFindByStatus {}
+@Operation(summary = "Generate Report", description = "Allow get a payment report", tags = {"Payable"})
+@ApiResponse(responseCode = "200", description = "The report was generated",
+	content = @Content(schema = @Schema(implementation = ReportResponse.class)))
+public @interface ApiOperationReport {}
